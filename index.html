@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+  <body>
+    <p id="fjoldi_innskradra"></p><br>
+    <p>Innskráðir notendur: </p><br>
+    <ul id="users_in_chat"></ul><br>
+    <ul id="messages"></ul>
+    
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script type="text/javascript">
+      $(function () {
+        // búum til tengingu clientsins við serverinn
+        var socket = io();
+        
+        $('form').submit(function(e){
+          // kemur í veg fyrir að síðan hlaðist aftur þegar forminu er submittað
+          e.preventDefault();
+          // sendum skilaboðin
+          socket.emit('chat message', $('#m').val());
+          // tæmum input boxið
+          $('#m').val('');
+          return false;
+        });
+        socket.on('chat message', function(msg, nick){
+        if (nick != "") {
+          $('#messages').append($('<li>').text(nick+" skrifaði: "+msg));
+        } else {
+          $('#messages').append($('<li>').text(msg));
+        }
+        });
+        socket.on('count', function(num){
+          document.getElementById('fjoldi_innskradra').innerHTML = "Fjöldi innskráðra er: "+num;
+        });
+        socket.on('users_logged_in', function(notendur){
+          $('#users_in_chat').empty();
+          for (var i=0; i<notendur.length; i++){
+            $('#users_in_chat').append($('<li>').text(notendur[i]));
+          }
+        });
+        var nick = prompt("Veldu notandanafn.");
+        socket.emit('join', nick);
+      });
+      
+    </script>
+  </body>
+</html>
