@@ -20,38 +20,49 @@
     <ul id="messages"></ul>
     
     <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+      <input id="message_input" autocomplete="off" /><button>Send</button>
     </form>
 
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script type="text/javascript">
-      $(function () {
+      $(function ()
+      {
         // búum til tengingu clientsins við serverinn
         var socket = io();
         
-        $('form').submit(function(e){
+        $('form').submit(function(e)
+        {
           // kemur í veg fyrir að síðan hlaðist aftur þegar forminu er submittað
           e.preventDefault();
           // sendum skilaboðin
-          socket.emit('chat message', $('#m').val());
+          socket.emit('chat message', $('#message_input').val());
           // tæmum input boxið
-          $('#m').val('');
+          $('#message_input').val('');
           return false;
         });
-        socket.on('chat message', function(msg, nick){
-        if (nick != "") {
-          $('#messages').append($('<li>').text(nick+" skrifaði: "+msg));
-        } else {
+
+        socket.on('chat message', function(msg, nick)
+        {
+        if (nick != "")
+        {
+          $('#messages').append($('<li>').text(nick + " skrifaði: " + msg));
+        }
+        else
+        {
           $('#messages').append($('<li>').text(msg));
         }
         });
-        socket.on('count', function(num){
-          document.getElementById('fjoldi_innskradra').innerHTML = "Fjöldi innskráðra er: "+num;
+
+        socket.on('count', function(num)
+        {
+          document.getElementById('fjoldi_innskradra').innerHTML = "Fjöldi innskráðra er: " + num;
         });
-        socket.on('users_logged_in', function(notendur){
+        socket.on('users_logged_in', function(notendur)
+        {
           $('#users_in_chat').empty();
-          for (var i=0; i<notendur.length; i++){
+          for (var i=0; i<notendur.length; i++)
+          {
             $('#users_in_chat').append($('<li>').text(notendur[i]));
           }
         });
