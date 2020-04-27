@@ -97,7 +97,7 @@ app.get('/*', function(req, res)
         });
         socket.on('chat message', function(msg)
         {
-            chatdb.collection("messages").insertOne({msg:socket.userName+' wrote: '+msg});
+            // chatdb.collection("messages").insertOne({msg:socket.userName+' wrote: '+msg});
             io.emit('chat message', msg, socket.userName);
         });
     });
