@@ -1,7 +1,7 @@
 const app = require('express')();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
-const mongo = require('mongodb').MongoClient;
+// const mongo = require('mongodb').MongoClient;
 
 var port = process.env.PORT || 3000 // Skilgreinum port
 var dburl = "mongodb://127.0.0.1/";
@@ -28,30 +28,30 @@ app.get('/*', function(req, res)
     res.end();
 });
 
-function chatlog()
-{
-    mongo.connect(dburl, function(err, db)
-    {
-        if (err) throw err;
-        var dbo = db.db("mongodb_chat");
-        dbo.collection("messages").find({}, { projection: { _id: 0, msg: 1 } }).toArray(function(err, result)
-        {
-            if (err) throw err;
-            console.log(result[2].msg);
-            db.close();
-        });
-    });
-};
+// function chatlog()
+// {
+//     mongo.connect(dburl, function(err, db)
+//     {
+//         if (err) throw err;
+//         var dbo = db.db("mongodb_chat");
+//         dbo.collection("messages").find({}, { projection: { _id: 0, msg: 1 } }).toArray(function(err, result)
+//         {
+//             if (err) throw err;
+//             console.log(result[2].msg);
+//             db.close();
+//         });
+//     });
+// };
 
-mongo.connect('mongodb://127.0.0.1/', {useUnifiedTopology: true}, function(err, db)
-{
-    if (err)
-    {
-        throw err;
-    }
-    var chatdb = db.db("mongodb_chat");
-    // hlustum eftir connection atburð á servernum og
-    // skrifum svarfall fyrir þann atburð
+// mongo.connect('mongodb://127.0.0.1/', {useUnifiedTopology: true}, function(err, db)
+// {
+//     if (err)
+//     {
+//         throw err;
+//     }
+//     var chatdb = db.db("mongodb_chat");
+//     // hlustum eftir connection atburð á servernum og
+//     // skrifum svarfall fyrir þann atburð
 
     io.on('connection', function(socket)
     {
@@ -130,7 +130,7 @@ mongo.connect('mongodb://127.0.0.1/', {useUnifiedTopology: true}, function(err, 
             io.emit('chat message', msg, socket.userName);
         });
     });
-});
+// });
 
 http.listen(port, function()
 {
