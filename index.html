@@ -14,13 +14,15 @@
     </style>
   </head>
   <body>
+    <button onclick="window.print()">Printa skjámind</button>
     <p id="fjoldi_innskradra"></p><br>
     <p>Innskráðir notendur: </p><br>
-    <ul id="users_in_chat"></ul><br>
-    <ul id="messages"></ul>
+    <ul id="users_in_chat"></ul>
+<p id="naf"></p>
+    <ul  id="messages"></ul>
     
     <form action="">
-      <input id="message_input" autocomplete="off" /><button>Send</button>
+      <input placeholder="skrifaðu hér" id="message_input" autocomplete="off" /><button>Send</button>
     </form>
 
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
@@ -47,16 +49,52 @@
         if (nick != "")
         {
           $('#messages').append($('<li>').text(nick + " skrifaði: " + msg));
+           $('#messages').append($('<li>').text(new Date()));
         }
         else
         {
           $('#messages').append($('<li>').text(msg));
+           $('#messages').append($('<li>').text(new Date()));
         }
         });
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+ socket.on('join', function(msg, nick){
+//chekka öll prógrömm sama hvað lítil breyting er gerð. allar breytingar láta allt annað hætta að virks þó þau séu 
+     //chekka öll prógrömm sama hvað lítil breyting er gerð. allar breytingar láta allt annað hætta að virks þó þau séu 
+ if (nick != "") {
+          $('#messages').append($('<li>').text(nick+" :hefur comið í chat"));
+        $('#messages').append($('<li>').text(new Date()));  
+        } else {
+        $('#messages').append($('<li>').text("nafnlaus "+" :hefur comið í chat"));
+        $('#messages').append($('<li>').text(new Date()));  }
+         });
+  //chekka öll prógrömm sama hvað lítil breyting er gerð. allar breytingar láta allt annað hætta að virks þó þau séu 
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+//chekka öll prógrömm sama hvað lítil breyting er gerð. allar breytingar láta allt annað hætta að virks þó þau séu 
+ socket.on('disconnect', function(msg, nick){
+//chekka öll prógrömm sama hvað lítil breyting er gerð. allar breytingar láta allt annað hætta að virks þó þau séu 
+     //chekka öll prógrömm sama hvað lítil breyting er gerð. allar breytingar láta allt annað hætta að virks þó þau séu 
+ if (nick != "") {
+         $('#messages').append($('<li>').text(nick+" :hefur farið úr chat"));
+        $('#messages').append($('<li>').text(new Date()));  
+        } else {
+        $('#messages').append($('<li>').text("nafnlaus "+" :hefur farið úr chat"));
+        $('#messages').append($('<li>').text(new Date()));  }
+         });
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         socket.on('count', function(num)
         {
           document.getElementById('fjoldi_innskradra').innerHTML = "Fjöldi innskráðra er: " + num;
+
+          ////////////////////////////////////////////////////////////////////////////////////////////
+socket.on('nafn', function(num){
+          document.getElementById('naf').innerHTML = " og þú ert: "+nick;
+ });
+          ////////////////////////////////////////////////////////////////////////////////////////////
         });
         socket.on('users_logged_in', function(notendur)
         {
@@ -68,6 +106,18 @@
         });
         var nick = prompt("Veldu notandanafn.");
         socket.emit('join', nick);
+        mongo.connect(dburl, function(err, db)
+        {
+            if (err) throw err;
+            var dbo = db.db("chatserver2020");
+            dbo.collection("messages").find({}, { projection: { _id: 0, msg: 1 } }).toArray(function(err, result)
+            {
+                if (err) throw err;
+                console.log(result[2].msg);
+                db.close();
+            });
+        });
+
       });
       
     </script>
