@@ -80,7 +80,7 @@ app.get('/*', function(req, res)
 
             // látum alla clienta hafa fylkið okkar í núverandi mynd
             io.emit('users_logged_in', notendur);
-            chatlog();
+            // chatlog();
         });
 
         socket.on('disconnect', function(nick, msg)
